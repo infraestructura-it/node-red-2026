@@ -43,13 +43,42 @@
         "name": "debug 1",
         "active": true,
         "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
+        "console": true,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload",
         "statusType": "auto",
-        "x": 440,
+        "x": 450,
         "y": 100,
         "wires": []
+    },
+    {
+        "id": "7f7037a330898082",
+        "type": "status",
+        "z": "59ca88e56ba416cc",
+        "name": "",
+        "scope": null,
+        "x": 390,
+        "y": 240,
+        "wires": [
+            [
+                "3e7ef4a0794aef34"
+            ]
+        ]
+    },
+    {
+        "id": "3e7ef4a0794aef34",
+        "type": "link call",
+        "z": "59ca88e56ba416cc",
+        "name": "xxx",
+        "links": [],
+        "linkType": "dynamic",
+        "timeout": "30",
+        "x": 670,
+        "y": 160,
+        "wires": [
+            []
+        ]
     }
 ]
