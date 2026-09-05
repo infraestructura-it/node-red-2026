@@ -8,6 +8,37 @@
         "env": []
     },
     {
+        "id": "74d13ba9f10db4e5",
+        "type": "mqtt-broker",
+        "name": "infraestructura-it",
+        "broker": "localhost",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
         "id": "ed34da3e1b15be0d",
         "type": "inject",
         "z": "59ca88e56ba416cc",
@@ -77,6 +108,42 @@
         "timeout": "30",
         "x": 670,
         "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "580231da2a9167b8",
+        "type": "mqtt in",
+        "z": "59ca88e56ba416cc",
+        "name": "",
+        "topic": "ordenes",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "74d13ba9f10db4e5",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 160,
+        "y": 320,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "bfaea7293c76ad0f",
+        "type": "claude",
+        "z": "59ca88e56ba416cc",
+        "name": "",
+        "model": "claude-sonnet-4-6",
+        "maxTokens": 1024,
+        "systemPrompt": "",
+        "temperature": "",
+        "topP": "",
+        "topK": "",
+        "x": 390,
+        "y": 340,
         "wires": [
             []
         ]
