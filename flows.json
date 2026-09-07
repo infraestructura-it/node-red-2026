@@ -8,6 +8,13 @@
         "env": []
     },
     {
+        "id": "tab-iit-exec-demo",
+        "type": "tab",
+        "label": "Ejemplo iit-exec-win",
+        "disabled": false,
+        "info": "Tres ejemplos de uso del nodo iit-exec-win: prueba simple, espacio en disco, y estado de impresoras."
+    },
+    {
         "id": "ed34da3e1b15be0d",
         "type": "inject",
         "z": "59ca88e56ba416cc",
@@ -54,29 +61,211 @@
         "wires": []
     },
     {
-        "id": "7f7037a330898082",
-        "type": "status",
-        "z": "59ca88e56ba416cc",
-        "name": "",
-        "scope": null,
-        "x": 390,
-        "y": 240,
+        "id": "inj-fecha",
+        "type": "inject",
+        "z": "tab-iit-exec-demo",
+        "name": "1. Prueba simple",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "Get-Date -Format 'yyyy-MM-dd HH:mm:ss'",
+        "payloadType": "str",
+        "x": 170,
+        "y": 100,
         "wires": [
-            []
+            [
+                "exec-fecha"
+            ]
         ]
     },
     {
-        "id": "300f6cbe65d68226",
+        "id": "exec-fecha",
         "type": "iit-exec-win",
-        "z": "59ca88e56ba416cc",
-        "name": "",
+        "z": "tab-iit-exec-demo",
+        "name": "Fecha y hora del sistema",
         "shellType": "powershell",
         "workingDir": "",
-        "timeoutMs": 30000,
-        "x": 330,
-        "y": 340,
+        "timeoutMs": "10000",
+        "x": 430,
+        "y": 100,
         "wires": [
-            []
+            [
+                "dbg-fecha"
+            ]
         ]
+    },
+    {
+        "id": "dbg-fecha",
+        "type": "debug",
+        "z": "tab-iit-exec-demo",
+        "name": "resultado fecha",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 690,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "inj-disco",
+        "type": "inject",
+        "z": "tab-iit-exec-demo",
+        "name": "2. Espacio en disco C:",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "Get-PSDrive C | Select-Object Used,Free | ConvertTo-Json",
+        "payloadType": "str",
+        "x": 190,
+        "y": 180,
+        "wires": [
+            [
+                "exec-disco"
+            ]
+        ]
+    },
+    {
+        "id": "exec-disco",
+        "type": "iit-exec-win",
+        "z": "tab-iit-exec-demo",
+        "name": "Espacio en disco",
+        "shellType": "powershell",
+        "workingDir": "",
+        "timeoutMs": "10000",
+        "x": 440,
+        "y": 180,
+        "wires": [
+            [
+                "fn-disco"
+            ]
+        ]
+    },
+    {
+        "id": "fn-disco",
+        "type": "function",
+        "z": "tab-iit-exec-demo",
+        "name": "parsear JSON",
+        "func": "if (msg.exitCode === 0 && msg.payload) {\n    try {\n        msg.payload = JSON.parse(msg.payload);\n        msg.payload.UsedGB = (msg.payload.Used / 1e9).toFixed(2);\n        msg.payload.FreeGB = (msg.payload.Free / 1e9).toFixed(2);\n    } catch (e) {\n        node.warn(\"No se pudo parsear el JSON: \" + e.message);\n    }\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 180,
+        "wires": [
+            [
+                "dbg-disco"
+            ]
+        ]
+    },
+    {
+        "id": "dbg-disco",
+        "type": "debug",
+        "z": "tab-iit-exec-demo",
+        "name": "resultado disco",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 900,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "inj-impresoras",
+        "type": "inject",
+        "z": "tab-iit-exec-demo",
+        "name": "3. Estado de impresoras",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "Get-Printer | Select-Object Name,PrinterStatus | ConvertTo-Json",
+        "payloadType": "str",
+        "x": 200,
+        "y": 260,
+        "wires": [
+            [
+                "exec-impresoras"
+            ]
+        ]
+    },
+    {
+        "id": "exec-impresoras",
+        "type": "iit-exec-win",
+        "z": "tab-iit-exec-demo",
+        "name": "Estado impresoras",
+        "shellType": "powershell",
+        "workingDir": "",
+        "timeoutMs": "15000",
+        "x": 450,
+        "y": 260,
+        "wires": [
+            [
+                "fn-impresoras"
+            ]
+        ]
+    },
+    {
+        "id": "fn-impresoras",
+        "type": "function",
+        "z": "tab-iit-exec-demo",
+        "name": "detectar fallas",
+        "func": "if (msg.exitCode !== 0) {\n    node.status({fill:\"red\", shape:\"ring\", text:\"error exec\"});\n    return msg;\n}\n\nlet printers = [];\ntry {\n    const parsed = JSON.parse(msg.payload);\n    printers = Array.isArray(parsed) ? parsed : [parsed];\n} catch (e) {\n    node.warn(\"No se pudo parsear: \" + e.message);\n    return msg;\n}\n\nconst conFallas = printers.filter(p => p.PrinterStatus !== 0 && p.PrinterStatus !== \"Normal\");\n\nmsg.payload = {\n    total: printers.length,\n    conFallas: conFallas.length,\n    detalle: printers\n};\n\nif (conFallas.length > 0) {\n    node.status({fill:\"yellow\", shape:\"dot\", text:conFallas.length + \" con falla\"});\n} else {\n    node.status({fill:\"green\", shape:\"dot\", text:\"todo normal\"});\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 680,
+        "y": 260,
+        "wires": [
+            [
+                "dbg-impresoras"
+            ]
+        ]
+    },
+    {
+        "id": "dbg-impresoras",
+        "type": "debug",
+        "z": "tab-iit-exec-demo",
+        "name": "resultado impresoras",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 930,
+        "y": 260,
+        "wires": []
     }
 ]
